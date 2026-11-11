@@ -122,6 +122,9 @@ app.post('/mcp/:token', async (req, res) => {
   await t.handleRequest(req, res, req.body);
 });
 app.all('/mcp/:token', (req, res) => res.status(405).set('Allow', 'POST').end());
+// The MCP endpoint uses a URL token, not OAuth. Answer OAuth discovery with 404 (not the basic-auth 401),
+// otherwise Claude assumes OAuth is required and fails to connect.
+app.all('/.well-known/*', (req, res) => res.sendStatus(404));
 
 // ================= UI (server-rendered, no client framework) =================
 const CSS = `
